@@ -1,0 +1,77 @@
+The Great Train Robbery
+All the players but one play a gang leader while the lone player is a Pinkerton Detective. Gangs try to earn money and infamy by robbing trains while the Pinkerton player earns fame and promotions.
+
+Goal:
+Games should be a set number of turns.
+Gang leaders want earn infamy and stashed loot while Pinkerton wants fame and promotions with each equating to the other. Infamy to fame and promotions to stashed loot levels.
+
+Gangs Leaders and the Pinkerton player draw gang member/detective, equipment, and intel cards. 
+
+Gang member/Detective cards give:
+Sally Mustang: +1 to escape
+Indian Tracker: +1 to capture
+Wild Bill: +2 to attack, -1 from escape
+
+Equipment cards would be like:
+Gatling gun: +4 to attack
+Bullet proof vests: +4 to defense  
+
+Intel cards reveal info such as:
+The town drunk let slip that he over heard the Dalton gang talking about a robbery. You can move 4 cards during the intel portion of your turn.
+One of your gang members was at a brothel and he heard a drunken Pinkerton man brag about a big shipment he was in charge of protecting. Move up to 4 cards during the intel portion of your turn.
+You see some shady players riding out of town in a hurry, reveal another player's card positions.
+You noticed a group of supposed settlers all have standard issue service revolvers, look at the Pinkerton cards for any one train you have cards placed on and move up to 4 if you wish.
+
+Train routes are randomly generated per turn based on the number of players. Gang members know nothing about the payloads of the train but do know how many gang member cards they need to play.
+
+Fame and infamy
+Pinkerton earns or loses fame while gangs earn or lose infamy.
+As the player earns this resource they can hire more men and get better cards.
+
+Pinkerton knows what's on the trains.
+Civilian trains earn infamy/fame. 
+Cargo trains with loot earn money/promotions.
+
+The more fame/infamy you have the more cards you can draw per turn and the more you can play per turn.
+infamy level 1: draw/play 3 
+infamy level 2: draw/play 4
+infamy level 3: draw/play 6
+infamy level 4: draw/play 8
+infamy level 5: draw/play 10
+
+Draw/play for the Pinkerton player is n times the draw/play amount per level with n being the number of players total (including the Pinkerton player)
+
+There should be x (3?) times the number of trains as total players.
+
+Cards are randomly generated when drawn so there are an infinite number of them.
+
+Turn phases -
+
+Draw cards
+
+Place cards (in secret):
+Players pick their targets to attack/defend without that info being reveled.
+Pinkerton has reserve card slots that are used after battles. This is a fixed number based on fame.
+
+Intel:
+Play intel cards. 
+If a player is allowed to move cards these movements are also secret.
+If two or more players play a "reveal another player's card positions" intel card the order is randomly chosen.
+
+Reveal cards
+All card placements are revealed.
+
+Battle:
+If more than one gang attacks a train gang combat is decided first. The winner gets to attack the train
+
+Escape: (not in this version)
+If a gang wins the Pinkerton crew can get back half the loot with a saving throw against escape.
+If the gang loses the Pinkerton crew can win fame by catching the crooks (gang loses fame).
+
+Winning:
+Whomever has the most fame/infamy at the end of the set number of turns or
+Gangs win by getting Pinkerton detective fired (fame level 0) then who ever has the most fame/money wins.
+Pinkerton wins by putting all gang leaders in jail (their infamy level is 0)
+
+Losing:
+Your fame/infamy level drops to 0.
