@@ -2,50 +2,35 @@ require "spec_helper"
 
 describe Robbery::Card do
 
-  before(:all) do
-    Robbery::Card.add_data(
-      type: :weapon, 
-      names: ["Gatling gun", "Shotgun", "Colt Revolver"],
-      effect_range: (1..3),
-      effect_type: :attack
-    )
-  end
+  let(:deck){Robbery::CardDeck.new(@sample_card_data)}
 
-  it "should create a card for which there is data" do
-    card = Robbery::Card.new(type: :weapon)
-    card.type.should == :weapon
+  it "should create a card with card data" do
+    card = Robbery::Card.new(
+      deck: deck, 
+      type: :equipment, 
+      gang: :pinkerton
+    )
+    card.type.should == :equipment
   end
 
   it "should raise an exception for unknown card types" do
-    expect{Robbery::Card.new(type: :foo)}.should raise_exception
-  end
-
-  it "should add card data for the whole class" do
-    Robbery::Card.data.should == [
-      {
-        type: :weapon, 
-        names: ["Gatling gun", "Shotgun", "Colt Revolver"],
-        effect_range: (1..3),
-        effect_type: :attack
-      }
-    ]
-
+    expect{Robbery::Card.new(deck: deck, type: :foo)}.should raise_exception
   end
 
   it "should set a name based on card type" do
-    card = Robbery::Card.new(type: :weapon)
-    card.name.should be_in(Robbery::Card.data_for_type(:weapon)[:names])
+    card = Robbery::Card.new(deck: deck, type: :equipment, gang: :gang)
+    card.name.should be_in(deck.names(:equipment, :gang))
   end
 
-  context "when creating weapon cards" do
+  it "should set a name based on gang or pinkerton" do
+    card = Robbery::Card.new(deck: deck, type: :equipment, gang: :pinkerton)
+    card.name.should be_in(deck.names(:equipment, :pinkerton))
+  end
 
-    it "should set an effect amount within the range" do
-      card = Robbery::Card.new(type: :weapon)
-      card.effect.should be_within(
-        Robbery::Card.data_for_type(:weapon)[:effect_range]
-      )
-    end
-
+  it "should set an effect amount within the range" do
+    card = Robbery::Card.new(deck: deck, type: :equipment, gang: :pinkerton)
+    card.effect_amount.should be_within(deck.range_for_card(card.name))
   end
 
 end
+
