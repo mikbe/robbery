@@ -13,10 +13,6 @@ describe Robbery::Card do
     card.type.should == :equipment
   end
 
-  it "should raise an exception for unknown card types" do
-    expect{Robbery::Card.new(deck: deck, type: :foo)}.should raise_exception
-  end
-
   it "should set a name based on card type" do
     card = Robbery::Card.new(deck: deck, type: :equipment, gang: :gang)
     card.name.should be_in(deck.names(:equipment, :gang))

@@ -39,11 +39,13 @@ infamy level 3: draw/play 6
 infamy level 4: draw/play 8
 infamy level 5: draw/play 10
 
+get to level 6 you win
+
 Draw/play for the Pinkerton player is n times the draw/play amount per level with n being the number of players total (including the Pinkerton player)
 
 There should be x (3?) times the number of trains as total players.
 
-Cards are randomly generated when drawn so there are an infinite number of them.
+CardDeck are randomly generated when drawn so there are an infinite number of them.
 
 Turn phases -
 

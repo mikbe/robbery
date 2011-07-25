@@ -47,70 +47,124 @@ require 'spec_helper'
 describe Robbery::GameBoard do
 
   let(:board){Robbery::GameBoard.new}
-  let(:player1){
-    board.add_player(
-      name: "Fred", 
-      type: :gang, 
-      gang_name: "The Wilmas"
-    )
-  }
-  let(:player2){
-    board.add_player(
-      name: "Bob", 
-      type: :pinkertons, 
-      gang_name: "Coppers"
-    )
-  }
 
-  it "should add players" do
-    board.add_player(name: "Fred", type: :gang, gang_name: "The Wilmas").should
-      change(board, :players)
+  context "when adding players" do
+    
+    it "should add players" do
+      expect{
+        board.add_player(
+          name: "Fred", 
+          gang: :gang, 
+          gang_name: "The Wilmas"
+        )
+      }.should change(board, :players)
+    end
+
+    it "should return player data if created" do
+       player = board.add_player(
+        name: "Fred",
+        gang: :gang,
+        gang_name: "The Wilmas"
+      )
+      player.should be_a(Robbery::Player)
+    end
+
   end
 
-  it "should return player data if created" # do
-  #     player = board.add_player(
-  #       name: "Fred",
-  #       type: :gang,
-  #       gang_name: "The Wilmas"
-  #     )
-  #     player.should_not be_nil
-  #   end
+  context "when building the deck" do
 
-  it "should return nil if duplicate name and gang name is given" do
-    player1 = board.add_player(
-      name: "Fred",
-      type: :gang,
-      gang_name: "The Wilmas"
-    )
-    player2 = board.add_player(
-      name: "Fred",
-      type: :gang,
-      gang_name: "The Wilmas"
-    )
-    player2.should be_nil
+    it "should build a deck using provided deck data" do
+      board.build_deck(@sample_card_data)
+      board.deck.should be_a(Robbery::CardDeck)
+    end
+
   end
 
-  it "should create an id for the player" # do
-  #     player1.id.should_not be_nil
-  #   end
+  context "when making trains" do
 
-  it "should generate trains" # do
-  #     expect{board.make_trains}.should change(board, :trains)
-  #   end
+    it "should make trains" do
+      board.add_player(
+        name: "Fred", 
+        gang: :gang, 
+        gang_name: "The Wilmas"
+      )
+      board.build_trains
+      board.trains.all?{|train| train.is_a? Robbery::Train}.should be_true
+    end
 
-  it "should generate trains based on players" do
-    board.add_player(
-      name: "Fred",
-      type: :gang,
-      gang_name: "The Wilmas"
-    )
+    it "should make trains based on the number of players" do
+      board.add_player(
+        name: "Fred", 
+        type: :gang, 
+        gang_name: "The Wilmas"
+      )
+      board.build_trains
+      train_count = board.trains.count
+      board.add_player(
+        name: "Bubba Gump", 
+        type: :gang, 
+        gang_name: "Shrimps"
+      )
+      board.build_trains
+      board.trains.count.should > train_count
+    end
 
-    board.add_player(
-      name: "Bob",
-      type: :pinkertons,
-      gang_name: "The Wilmas"
-    )
+  end
 
+  context "when drawing cards" do
+
+    before(:each) do
+      @player1 = board.add_player(
+        name: "Fred", 
+        gang: :gang, 
+        gang_name: "The Wilmas"
+      )
+      board.build_deck(@sample_card_data)
+    end
+    
+    it "should add cards to the player's cards" do
+      board.draw_cards(player: @player1, count: 3)
+      @player1.cards.count.should == 3
+    end
+    
+  end
+
+  context "when placing cards" do
+
+    before(:each) do
+      @player1 = board.add_player(
+        name: "Fred", 
+        gang: :gang, 
+        gang_name: "The Wilmas"
+      )
+      board.build_deck(@sample_card_data)
+      board.build_trains
+      board.draw_cards(player: @player1, count: 3)
+    end
+
+    it "should place snakes on a plane, I mean cards on a train" do
+      board.place_card(
+        player: @player1, 
+        card: @player1.cards.first,
+        train: board.trains.first
+      )
+      board.trains.first.placed_cards[@player1].should == [@player1.cards.first]
+    end
+    
+    it "should not place the same card twice" do
+      board.place_card(
+        player: @player1, 
+        card: @player1.cards.first,
+        train: board.trains.first
+      )
+      board.place_card(
+        player: @player1, 
+        card: @player1.cards.first,
+        train: board.trains.last
+      )
+      board.trains.last.placed_cards[@player1].should be_nil
+    end
+    
   end
 
 end

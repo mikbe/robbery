@@ -25,7 +25,11 @@ module Robbery
         array << card[:text][gang][:name] if card[:type] == type
       end
     end
-
+    
+    def types
+      @types ||= @data.map{|card| card[:type]}.uniq
+    end
+    
     def range_for_card(name)
       @data.each do |data|
         return data[:effect_range] if
@@ -35,8 +39,8 @@ module Robbery
       nil
     end
 
-    def draw(number, type)
-      number.times.collect {{}}
+    def draw(gang)
+      Card.new(gang: gang, type: self.types.sample, deck: self)
     end
 
     def count

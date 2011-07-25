@@ -22,8 +22,8 @@ describe Robbery::CardDeck do
     deck.count.should == @sample_card_data.length
   end
 
-  it "should draw the number of cards specified"  do
-    deck.draw(3, :gang).count.should == 3
+  it "should draw a card" do
+    deck.draw(:gang).should be_a(Robbery::Card)
   end
   
 end
