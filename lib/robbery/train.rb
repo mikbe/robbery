@@ -2,7 +2,7 @@ module Robbery
   class Train
     include Identifiable
 
-    attr_reader :type, :cars, :value, :placed_cards
+    attr_reader :name, :type, :cars, :value, :placed_cards
 
     def initialize(level=2)
       super
@@ -15,13 +15,20 @@ module Robbery
     def place_card(params)
       player = params[:player]
       card   = params[:card]
-      return unless card.placed.nil?
+      return unless card.placed_on_train.nil?
 
       @placed_cards[player] ||= []
       return if @placed_cards[player].count >= @cars
-      
-      card.placed = self
+      card.placed_on_train = self
       @placed_cards[player] << params[:card]
+    end
+
+    def name
+      "Train ##{@number}"
+    end
+
+    def <=>(other)
+      self.value <=> other.value
     end
 
   end

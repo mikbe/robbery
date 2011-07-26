@@ -26,53 +26,53 @@ RSpec.configure do |config|
   config.before(:all) do
     @sample_card_data = [
       {
-        type: :equipment, 
+        type: :equipment,
         effect_range: (2..4),
         effect_type: :attack,
         text: {
           gang: {
-            name: "Stolen Gatling", 
+            name: "Stolen Gatling",
             description: "You 'liberated' a gatling gun from the Army armory."
           },
           pinkerton: {
             name: "Gatling gun",
-            description: 
+            description:
             "That requisition you filled out last year finally came in!"
           }
         }
       },
       {
-        type: :equipment, 
+        type: :equipment,
         effect_range: (1..2),
         effect_type: :attack,
         text: {
           gang:{
-            name: "Indian Carbines", 
-            description: 
+            name: "Indian Carbines",
+            description:
             "A Native American arms dealer gave you a deal on some used guns."
           },
           pinkerton:{
             name: "Army Carbines",
-            description: 
+            description:
             "The base captain said you have their old."
           }
         }
       },
       {
-        type: :equipment, 
+        type: :equipment,
         effect_range: (1..2),
         effect_type: :defense,
         text: {
           gang:{
-            name: "Heavy Wool Jackets", 
-            description: 
+            name: "Heavy Wool Jackets",
+            description:
             "Your crazy inventor cousin said these wool" +
             " jackets protect you from bullets." +
             "He didn't offer to come along."
           },
           pinkerton:{
             name: "Experimental Bullet Repellent vests",
-            description: 
+            description:
             "Pinkerton HQ wants you to try out some new " +
             "fangled bullet 'proof' vests."
           }

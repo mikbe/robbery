@@ -3,7 +3,7 @@ module Robbery
   class CardDeck
 
     attr_reader :data
-    
+
     def initialize(card_data=[])
       set_data(card_data)
     end
@@ -25,29 +25,31 @@ module Robbery
         array << card[:text][gang][:name] if card[:type] == type
       end
     end
-    
+
     def types
       @types ||= @data.map{|card| card[:type]}.uniq
     end
-    
+
     def range_for_card(name)
       @data.each do |data|
         return data[:effect_range] if
-        [data[:text][:gang][:name],
-        data[:text][:pinkerton][:name]].include?(name)
+          [
+            data[:text][:gang][:name],
+            data[:text][:pinkerton][:name]
+          ].include?(name)
       end
       nil
     end
 
-    def draw(gang)
-      Card.new(gang: gang, type: self.types.sample, deck: self)
+    def draw(gang, type=nil)
+      Card.new(gang: gang, type: type || self.types.sample, deck: self)
     end
 
     def count
       @data.count
     end
     alias_method :length, :count
-    
+
   end
 
 end
