@@ -31,7 +31,7 @@ module Robbery
         while gangs.count > 1
           battle_results << resolve_battle(train: train, gangs: gangs.sample(2))
         end
-        
+
         unless pinkerton.empty?
           gangs.concat pinkerton
           battle_results << resolve_battle(train: train, gangs: gangs)
@@ -39,32 +39,6 @@ module Robbery
 
       end
       battle_results
-    end
-
-    # refactor: algorithm should be injectable, play balance
-    def resolve_battle(params)
-      train = params[:train]
-      gang1, gang2 = *params[:gangs]
-
-      one_on_two = false
-      two_on_one = false
-      while one_on_two == two_on_one
-        gang1_roll = roll_dice(gang1, train)
-        gang2_roll = roll_dice(gang2, train)
-        one_on_two = gang1_roll[:attack] > gang2_roll[:defense]
-        two_on_one = gang2_roll[:attack] > gang1_roll[:defense]
-      end
-      
-      winner = one_on_two ? gang1 : gang2
-      loser = gang1 == winner ? gang2 : gang1
-
-      {
-         train: train,
-        winner: winner,
-         loser: loser,
-        reward: train.value
-      }
-
     end
 
     def roll_dice(gang, train)
@@ -79,10 +53,9 @@ module Robbery
       (@players << Player.new(params)).last
     end
 
-    def build_trains
-      # This logic should be injectable, not hardcoded
+    def build_trains(count=@players.count * 3)
       level = @players.map{|player| player.level}.inject(:+)
-      @trains = (@players.count * 3).times.collect {Train.new(level)}
+      @trains = count.times.collect {Train.new(level)}
     end
 
     def build_deck(card_data)
@@ -107,21 +80,31 @@ module Robbery
 
     # refactor into a class
     # inject intel messages and logic instead of hardcoding
-    def generate_intel
+    def generate_intel(params={})
+      best_train_chance = params[:best_train_chance] || 0.3
       @players.map do |player|
         player.cards.select do |card|
           next unless card.type == :intel
+          move_count = player.level * (params[:move_multiplyer] || 2)
           card.name, card.description =
-            rand < 0.3 ?
-            best_train_intel(player) :
-            player_intel(player)
+            rand < best_train_chance ?
+            best_train_intel(player: player, move_count: move_count) :
+            player_intel(player: player, move_count: move_count)
         end
       end
     end
 
+    def change_player_score(params)
+      player = params.delete(:player)
+      player.level_up(params)
+    end
+
     private
 
-    def player_intel(player)
+    def player_intel(params)
+
+      player = params[:player]
+      move_count = params[:move_count]
       name = "Player Intel"
       description = "What a waste, no one has any intel."
 
@@ -139,16 +122,42 @@ module Robbery
       "A bar keep told you that #{enemy_player.gang_name} " +
       "are on #{enemy_train.name} with a total power of " +
       "#{power[:defense] + power[:attack]}. " +
-      "Move up to #{player.level * 2} cards."]
+      "Move up to #{move_count} cards."]
     end
 
-    def best_train_intel(player)
+    def best_train_intel(params)
+      player = params[:player]
+      move_count = params[:move_count]
       most_valuable = @trains.max
       ["Most Valuable Train",
       "A clerk let slip that #{most_valuable.name} " +
       ", a #{most_valuable.type} train, is the most   " +
       "valuable with #{most_valuable.value} points. " +
-      "Move up to #{player.level * 2} cards."]
+      "Move up to #{move_count} cards."]
+    end
+
+    def resolve_battle(params)
+      train = params[:train]
+      player1, player2 = *params[:gangs]
+
+      one_attack    = false
+      two_attack    = false
+      loop_timeout  = 10
+      while one_attack == two_attack
+        player1_roll  = roll_dice(player1, train)
+        player2_roll  = roll_dice(player2, train)
+        one_attack    = player1_roll[:attack] > player2_roll[:defense]
+        two_attack    = player2_roll[:attack] > player1_roll[:defense]
+
+        if (loop_timeout -= 1) < 1
+          one_attack, two_attack = [[false, true], [true, false]].sample
+        end
+      end
+
+      winner, loser = one_attack ? [player1, player2] : [player2, player1]
+
+      {train: train, winner: winner, loser: loser}
+
     end
 
   end

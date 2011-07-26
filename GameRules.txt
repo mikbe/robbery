@@ -33,17 +33,21 @@ Civilian trains earn infamy/fame.
 Cargo trains with loot earn money/promotions.
 
 The more fame/infamy you have the more cards you can draw per turn and the more you can play per turn.
+
+Gang Draw/Play cards:
 infamy level 1: draw/play 3 
 infamy level 2: draw/play 4
 infamy level 3: draw/play 6
 infamy level 4: draw/play 8
 infamy level 5: draw/play 10
 
-get to level 6 you win
+get to level x you win
 
-Draw/play for the Pinkerton player is n times the draw/play amount per level with n being the number of players total (including the Pinkerton player)
+Draw/play amount for the Pinkerton player is n times the draw/play amount per level with n being the number of players total (including the Pinkerton player)
 
-There should be x (3?) times the number of trains as total players.
+Note: This is just a suggested play rule, the engine does not enforce any draw limits.
+
+There should be x times the number of trains as total players.
 
 CardDeck are randomly generated when drawn so there are an infinite number of them.
 
@@ -66,14 +70,15 @@ All card placements are revealed.
 Battle:
 If more than one gang attacks a train gang combat is decided first. The winner gets to attack the train
 
-Escape: (not in this version)
+<strike>Escape: (not in this version)
 If a gang wins the Pinkerton crew can get back half the loot with a saving throw against escape.
-If the gang loses the Pinkerton crew can win fame by catching the crooks (gang loses fame).
+If the gang loses the Pinkerton crew can win fame by catching the crooks (gang loses fame).</strike>
 
 Winning:
-Whomever has the most fame/infamy at the end of the set number of turns or
+<strike>Whomever has the most fame/infamy at the end of the set number of turns or
 Gangs win by getting Pinkerton detective fired (fame level 0) then who ever has the most fame/money wins.
-Pinkerton wins by putting all gang leaders in jail (their infamy level is 0)
+Pinkerton wins by putting all gang leaders in jail (their infamy level is 0)</strike>
+Whomever gets to infamy level x first wins. There are no demotions.
 
 Losing:
 Your fame/infamy level drops to 0.

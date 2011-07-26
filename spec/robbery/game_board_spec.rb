@@ -2,44 +2,11 @@ require 'spec_helper'
 
 =begin
 
-  How the engine is used:
+  Battle will return results and alter game state 
 
-  Add players.
+  UI: Read player scores (display them using your views)
 
-  Start game - initializes state?
-  Should there be a turn phase state? Will it actually do anything?
-  How much state should the engine have? For instance should it gererate and save
-  train state? I think so. "Read" method should be "Generate" and the state should
-  be saved so it can be used by other methods that require that information.
-
-  Turn phase would just be a convinience for telling where the game engine is at.
-
-
-  # Turn start
-
-  Generate trains
-
-  Players draw cards
-  Shouldn't get more than one intel card per turn, chance of draw should be 25%?
-
-  Players place cards on trains
-
-  Decide intel cards - intel cards are blank until after all players place cards
-
-  Players play intel cards (intel cards are only good for one turn)
-
-  Players move cards based on intel card
-
-  Show cards - Engine does nothing, this is all UI
-
-  Get train battle enumerator and call battle for each one.
-  (? Battle could do it but having an enumerator could be useful)
-
-  Battle will return results and alter game state (increase/decrease)
-
-  Read player scores (display them using your views)
-
-  call Victory? and exit if true
+  UI: call Victory? and exit if true
 
 =end
 
@@ -57,7 +24,7 @@ describe Robbery::GameBoard do
   end
 
   context "when starting a turn" do
-    
+
     it "should generate train sets" do
       board.add_player(
         name: "Fred",
@@ -66,7 +33,7 @@ describe Robbery::GameBoard do
       )
       expect{board.start_turn}.should change(board, :trains).from be_empty
     end
-    
+
   end
 
   context "when resetting the board" do
@@ -124,9 +91,9 @@ describe Robbery::GameBoard do
         gang: :gang,
         gang_name: "The Wilmas"
       )
-      
+
       player2.should be_nil
-      
+
     end
 
   end
@@ -230,7 +197,7 @@ describe Robbery::GameBoard do
       )
       card.should == nil
     end
-    
+
   end
 
   context "when moving a card" do
@@ -306,7 +273,7 @@ describe Robbery::GameBoard do
 
     it "should not set intel card descriptions when first drawn" do
       board.draw_cards(player: @player1, type: :intel)
-      
+
       board.player_cards(:intel).all? do |card|
         card.description.nil?
       end.should be_true
@@ -315,9 +282,9 @@ describe Robbery::GameBoard do
     it "should add a name to intel cards" do
       board.draw_cards(player: @player1, type: :intel)
       board.draw_cards(player: @player2, type: :intel)
-      
+
       board.generate_intel
-      
+
       board.player_cards(:intel).none? do |card|
         card.name.nil?
       end.should be_true
@@ -326,9 +293,9 @@ describe Robbery::GameBoard do
     it "should add a description to intel cards" do
       board.draw_cards(player: @player1, type: :intel)
       board.draw_cards(player: @player2, type: :intel)
-      
+
       board.generate_intel
-      
+
       board.player_cards(:intel).none? do |card|
         card.description.nil?
       end.should be_true
@@ -337,7 +304,6 @@ describe Robbery::GameBoard do
   end
 
   context "when battling" do
-
 
     before(:each) do
       @player1 = board.add_player(
@@ -375,23 +341,67 @@ describe Robbery::GameBoard do
       )
     end
 
-=begin
+    it "should return the results of battles" do
+      battles = board.resolve_battles
+      battles.should be_an(Array)
+    end
 
-   battle data
-   train: <train>
-  winner: <player>
-   loser: <player>
-  reward: points
-
-=end
-    
-    it "should return which trains were in battles" do
+    it "should return the train for a battles" do
       battles = board.resolve_battles
       battles.first[:train].should == board.trains.first
-      
+    end
+
+    it "should return the winner of a battle" do
+      battles = board.resolve_battles
+      battles.first[:winner].should be_a(Robbery::Player)
+    end
+
+    it "should return the loser of a battle" do
+      battles = board.resolve_battles
+      battles.first[:loser].should be_a(Robbery::Player)
+    end
+
+  end
+
+  context "when changing player score" do
+    
+    before(:each) do
+      @player1 = board.add_player(
+        name: "Fred",
+        gang: :gang,
+        gang_name: "Wilma's Boys"
+      )
     end
     
-    
+    it "should change a player's score" do
+      amount = 5
+      type = :fame
+      expect{
+        board.change_player_score(player: @player1, amount: amount, type: type)
+      }.should change(@player1, type).by(amount)
+    end
+
+    it "should level up the player when their score is high enough" do
+      amount = 11
+      type = :fame
+      board.change_player_score(player: @player1, amount: amount, type: type)
+      @player1.level.should == 2
+    end
+
+    it "should not level up the player if their score is not high enough" do
+      amount = 10
+      type = :riches
+      board.change_player_score(player: @player1, amount: amount, type: type)
+      @player1.level.should == 1
+    end
+
+    it "should level up the player multiple levels if the score warrants it" do
+      amount = (1**2 + 10) + (2**2 + 10)
+      type = :riches
+      board.change_player_score(player: @player1, amount: amount, type: type)
+      @player1.level.should == 3
+    end
+
   end
 
 end

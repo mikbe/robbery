@@ -1,7 +1,9 @@
 module Robbery
   class Player
     include Identifiable
-    attr_reader :name, :gang, :gang_name, :cards, :level, :fame, :riches
+    attr_reader :name, :gang, :gang_name,
+                :cards,
+                :fame, :riches
 
     def initialize(params)
       super
@@ -12,6 +14,7 @@ module Robbery
       @level      = 1
       @fame       = 1
       @riches     = 0
+
     end
 
     def draw_card(deck, type=nil)
@@ -38,11 +41,34 @@ module Robbery
     end
 
     def power_on_train(train)
-      cards_on_train(train).each_with_object({defense: 0, attack: 0}) do 
+      cards_on_train(train).each_with_object({defense: 0, attack: 0}) do
       |card, power|
         power[:defense] += card.defense
         power[:attack]  += card.attack
       end
+    end
+
+    def level_up(params)
+      type    = params[:type]
+      amount  = params[:amount]
+
+      case (type)
+        when :fame
+          @fame += amount
+        when :riches
+          @fame += amount
+      end
+
+    end
+
+    def level
+      score = @fame + @riches
+      level = 0
+      while score > 0
+        level += 1
+        score -= (level**2 + 10)
+      end
+      level
     end
 
   end
