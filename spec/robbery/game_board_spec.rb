@@ -46,7 +46,51 @@ require 'spec_helper'
 
 describe Robbery::GameBoard do
 
-  let(:board){Robbery::GameBoard.new}
+  let(:board){Robbery::GameBoard.new(card_data: @sample_card_data)}
+  before(:each) do
+    board.reset
+  end
+
+  it "should set card data when initialized" do
+    board = Robbery::GameBoard.new(card_data: @sample_card_data)
+    board.deck.should_not be_nil
+  end
+
+  context "when starting a turn" do
+    
+    it "should generate train sets" do
+      board.add_player(
+        name: "Fred",
+        gang: :gang,
+        gang_name: "The Wilmas"
+      )
+      expect{board.start_turn}.should change(board, :trains).from be_empty
+    end
+    
+  end
+
+  context "when resetting the board" do
+
+    it "should remove players" do
+      board.add_player(
+        name: "Fred",
+        gang: :gang,
+        gang_name: "The Wilmas"
+      )
+      expect{board.reset}.should change(board, :players).to be_empty
+    end
+
+    it "should remove players" do
+      board.add_player(
+        name: "Fred",
+        gang: :gang,
+        gang_name: "The Wilmas"
+      )
+      board.build_trains
+      expect{board.reset}.should change(board, :trains).to be_empty
+    end
+
+  end
 
   context "when adding players" do
 
@@ -164,9 +208,8 @@ describe Robbery::GameBoard do
         gang: :gang,
         gang_name: "The Wilmas"
       )
-      board.build_deck(@sample_card_data)
       board.build_trains
-      board.draw_cards(player: @player1, count: 3, type: :equipment)
+      board.draw_cards(player: @player1, count: 2, type: :equipment)
     end
 
     it "should place snakes on a plane, I mean cards on a train" do
@@ -177,21 +220,6 @@ describe Robbery::GameBoard do
       )
       board.trains.first.placed_cards[@player1].should == [@player1.cards.first]
     end
-
-    it "should not place the same card twice" do
-      board.place_card(
-        player: @player1,
-        card: @player1.cards.first,
-        train: board.trains.first
-      )
-      board.place_card(
-        player: @player1,
-        card: @player1.cards.first,
-        train: board.trains.last
-      )
-      board.trains.last.placed_cards[@player1].should be_nil
-    end
-
 
     it "should not place intel cards" do
       draw = board.draw_cards(player: @player1, type: :intel)
@@ -205,11 +233,37 @@ describe Robbery::GameBoard do
     
   end
 
-  context "during intel phase" do
+  context "when moving a card" do
 
     before(:each) do
-      board.clear
-      board.build_deck(@sample_card_data)
+      @player1 = board.add_player(
+        name: "Fred",
+        gang: :gang,
+        gang_name: "The Wilmas"
+      )
+      board.build_trains
+      board.draw_cards(player: @player1, count: 2, type: :equipment)
+    end
+
+    it "should place a card again (allows moving during intel)" do
+      board.place_card(
+        player: @player1,
+        card: @player1.cards.first,
+        train: board.trains.first
+      )
+      board.place_card(
+        player: @player1,
+        card: @player1.cards.first,
+        train: board.trains.last
+      )
+      board.trains.last.placed_cards[@player1].should == [@player1.cards.first]
+    end
+
+  end
+
+  context "when generating intel" do
+
+    before(:each) do
       @player1 = board.add_player(
         name: "Fred",
         gang: :gang,
@@ -221,8 +275,8 @@ describe Robbery::GameBoard do
         gang_name: "Da Cops"
       )
       board.build_trains
-      board.draw_cards(player: @player1, count: 3, type: :equipment)
-      board.draw_cards(player: @player2, count: 3, type: :equipment)
+      board.draw_cards(player: @player1, count: 2, type: :equipment)
+      board.draw_cards(player: @player2, count: 2, type: :equipment)
       board.place_card(
         player: @player1,
         card: @player1.cards.first,
@@ -236,21 +290,21 @@ describe Robbery::GameBoard do
       board.place_card(
         player: @player2,
         card: @player2.cards.first,
-        train: board.trains.first
+        train: board.trains.last
       )
       board.place_card(
         player: @player2,
         card: @player2.cards.last,
-        train: board.trains.first
+        train: board.trains.last
       )
     end
 
-    it "should not set intel card names at first" do
+    it "should not set intel card names when first drawn" do
       board.draw_cards(player: @player1, type: :intel)
       board.player_cards(:intel).all?{|card|card.name.nil?}.should be_true
     end
 
-    it "should not set intel card descriptions at first" do
+    it "should not set intel card descriptions when first drawn" do
       board.draw_cards(player: @player1, type: :intel)
       
       board.player_cards(:intel).all? do |card|
@@ -280,6 +334,64 @@ describe Robbery::GameBoard do
       end.should be_true
     end
 
+  end
+
+  context "when battling" do
+
+
+    before(:each) do
+      @player1 = board.add_player(
+        name: "Fred",
+        gang: :gang,
+        gang_name: "Wilma's Boys"
+      )
+      @player2 = board.add_player(
+        name: "Copper",
+        gang: :pinkerton,
+        gang_name: "Da Cops"
+      )
+      board.build_trains
+      board.draw_cards(player: @player1, count: 2, type: :equipment)
+      board.draw_cards(player: @player2, count: 2, type: :equipment)
+      board.place_card(
+        player: @player1,
+        card: @player1.cards.first,
+        train: board.trains.first
+      )
+      board.place_card(
+        player: @player1,
+        card: @player1.cards.last,
+        train: board.trains.first
+      )
+      board.place_card(
+        player: @player2,
+        card: @player2.cards.first,
+        train: board.trains.first
+      )
+      board.place_card(
+        player: @player2,
+        card: @player2.cards.last,
+        train: board.trains.first
+      )
+    end
+
+=begin
+
+   battle data
+   train: <train>
+  winner: <player>
+   loser: <player>
+  reward: points
+
+=end
+    
+    it "should return which trains were in battles" do
+      battles = board.resolve_battles
+      battles.first[:train].should == board.trains.first
+      
+    end
+    
+    
   end
 
 end

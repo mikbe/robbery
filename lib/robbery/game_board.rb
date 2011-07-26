@@ -4,14 +4,74 @@ module Robbery
 
     attr_reader :players, :trains, :deck
 
-    def initialize
-      clear
+    def initialize(params)
+      reset
+      build_deck(params[:card_data])
     end
 
-    def clear
+    def reset
       @players = []
       @trains  = []
-      @deck    = nil
+    end
+
+    def start_turn
+      build_trains
+    end
+
+    def resolve_battles
+      battle_results = []
+      @trains.each do |train|
+        next unless train.placed_cards
+
+        players = train.players_on_train
+
+        gangs = players.select{|player| player.gang == :gang}
+        pinkerton = players - gangs
+
+        while gangs.count > 1
+          battle_results << resolve_battle(train: train, gangs: gangs.sample(2))
+        end
+        
+        unless pinkerton.empty?
+          gangs.concat pinkerton
+          battle_results << resolve_battle(train: train, gangs: gangs)
+        end
+
+      end
+      battle_results
+    end
+
+    # refactor: algorithm should be injectable, play balance
+    def resolve_battle(params)
+      train = params[:train]
+      gang1, gang2 = *params[:gangs]
+
+      one_on_two = false
+      two_on_one = false
+      while one_on_two == two_on_one
+        gang1_roll = roll_dice(gang1, train)
+        gang2_roll = roll_dice(gang2, train)
+        one_on_two = gang1_roll[:attack] > gang2_roll[:defense]
+        two_on_one = gang2_roll[:attack] > gang1_roll[:defense]
+      end
+      
+      winner = one_on_two ? gang1 : gang2
+      loser = gang1 == winner ? gang2 : gang1
+
+      {
+         train: train,
+        winner: winner,
+         loser: loser,
+        reward: train.value
+      }
+
+    end
+
+    def roll_dice(gang, train)
+      powers = gang.power_on_train(train)
+      attack = rand(powers[:attack] + gang.level)
+      defense = rand(powers[:defense] + gang.level)
+      {attack: attack, defense: defense}
     end
 
     def add_player(params)
@@ -25,8 +85,8 @@ module Robbery
       @trains = (@players.count * 3).times.collect {Train.new(level)}
     end
 
-    def build_deck(deck_data)
-      @deck = CardDeck.new(deck_data)
+    def build_deck(card_data)
+      @deck = CardDeck.new(card_data)
     end
 
     def draw_cards(params)
@@ -51,15 +111,15 @@ module Robbery
       @players.map do |player|
         player.cards.select do |card|
           next unless card.type == :intel
-          card.name, card.description = 
-            rand < 0.3 ? 
-            best_train_intel(player) : 
+          card.name, card.description =
+            rand < 0.3 ?
+            best_train_intel(player) :
             player_intel(player)
         end
       end
     end
 
-    private 
+    private
 
     def player_intel(player)
       name = "Player Intel"
@@ -68,7 +128,7 @@ module Robbery
       enemy_players = (@players - [player])
       enemy_train = nil
       while enemy_player = enemy_players.sample
-        break if enemy_train = enemy_player.engaging_trains.sample
+        break if enemy_train = enemy_player.engaged_trains.sample
         enemy_players.delete(enemy_player)
       end
       return [name, description] unless enemy_player
@@ -78,7 +138,7 @@ module Robbery
       [name,
       "A bar keep told you that #{enemy_player.gang_name} " +
       "are on #{enemy_train.name} with a total power of " +
-      "#{power[:defense] + power[:attack]}. " + 
+      "#{power[:defense] + power[:attack]}. " +
       "Move up to #{player.level * 2} cards."]
     end
 
@@ -87,7 +147,7 @@ module Robbery
       ["Most Valuable Train",
       "A clerk let slip that #{most_valuable.name} " +
       ", a #{most_valuable.type} train, is the most   " +
-      "valuable with #{most_valuable.value} points. " + 
+      "valuable with #{most_valuable.value} points. " +
       "Move up to #{player.level * 2} cards."]
     end
 

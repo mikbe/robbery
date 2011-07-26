@@ -11,16 +11,23 @@ module Robbery
       @value = rand(level * 3) + 1
       @placed_cards = {}
     end
-    
+
     def place_card(params)
       player = params[:player]
       card   = params[:card]
-      return unless card.placed_on_train.nil?
 
       @placed_cards[player] ||= []
       return if @placed_cards[player].count >= @cars
+      
+      remove_card(card) if card.placed_on_train
       card.placed_on_train = self
+
       @placed_cards[player] << params[:card]
+      card
+    end
+
+    def players_on_train
+      @placed_cards.keys
     end
 
     def name
@@ -29,6 +36,17 @@ module Robbery
 
     def <=>(other)
       self.value <=> other.value
+    end
+
+    def remove_all_cards
+      while card = placed_cards.first
+        remove_card(card)
+      end
+    end
+
+    def remove_card(card)
+      card.placed_on_train = nil
+      @placed_cards.delete(card)
     end
 
   end

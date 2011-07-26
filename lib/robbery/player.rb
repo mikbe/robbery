@@ -26,7 +26,7 @@ module Robbery
       card
     end
 
-    def engaging_trains
+    def engaged_trains
       cards.each_with_object([]) do |card, trains|
         next if card.type == :intel || !card.placed_on_train
         trains << card.placed_on_train
