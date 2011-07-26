@@ -14,10 +14,6 @@ module Robbery
       @trains  = []
     end
 
-    def start_turn
-      build_trains
-    end
-
     def resolve_battles
       battle_results = []
       @trains.each do |train|
@@ -50,10 +46,15 @@ module Robbery
 
     def add_player(params)
       return if @players.any?{|player| player.gang_name == params[:gang_name]}
+      return if @players.any?{|player| player.gang == :pinkerton}
       (@players << Player.new(params)).last
     end
 
-    def build_trains(count=@players.count * 3)
+    def add_players(*players)
+      players.collect{|player| add_player(player)}
+    end
+    
+    def build_trains(count=@players.count * 2)
       level = @players.map{|player| player.level}.inject(:+)
       @trains = count.times.collect {Train.new(level)}
     end
@@ -79,11 +80,13 @@ module Robbery
     end
 
     # refactor into a class
-    # inject intel messages and logic instead of hardcoding
+    # inject intel messages instead of hardcoding
     def generate_intel(params={})
       best_train_chance = params[:best_train_chance] || 0.3
       @players.map do |player|
-        player.cards.select do |card|
+      {
+          player: player,
+          cards: player.cards.select do |card|
           next unless card.type == :intel
           move_count = player.level * (params[:move_multiplyer] || 2)
           card.name, card.description =
@@ -91,6 +94,7 @@ module Robbery
             best_train_intel(player: player, move_count: move_count) :
             player_intel(player: player, move_count: move_count)
         end
+      }
       end
     end
 

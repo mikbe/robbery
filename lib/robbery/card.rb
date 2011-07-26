@@ -22,6 +22,9 @@ module Robbery
       text            = card[:text][params[:gang]]
       @name           = text[:name]
       @description    = text[:description]
+      
+      @description   += " Adds +#{@effect_amount} to #{@effect_type}"
+      
     end
     
     def defense

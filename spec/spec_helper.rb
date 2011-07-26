@@ -1,7 +1,6 @@
 $:.unshift File.expand_path(File.join(File.dirname(__FILE__), "/../lib"))
 $: << '.'
 
-require 'rspec'
 require 'robbery'
 
 RSpec::Matchers.define :be_in do |collection|
@@ -24,7 +23,8 @@ end
 
 RSpec.configure do |config|
   config.before(:all) do
-    @sample_card_data = [
+    @sample_card_data = 
+    [
       {
         type: :equipment,
         effect_range: (2..4),
@@ -54,7 +54,7 @@ RSpec.configure do |config|
           pinkerton:{
             name: "Army Carbines",
             description:
-            "The base captain said you have their old."
+            "The base captain said you borrow some of their old guns."
           }
         }
       },
@@ -75,6 +75,37 @@ RSpec.configure do |config|
             description:
             "Pinkerton HQ wants you to try out some new " +
             "fangled bullet 'proof' vests."
+          }
+        }
+      },
+      {
+        type: :person,
+        effect_range: (2..4),
+        effect_type: :defense,
+        text: {
+          gang:{
+            name: "Eagle Eye'd Pete",
+            description: "Pete will help protect your rear flank."
+          },
+          pinkerton:{
+            name: "Doc Holliday",
+            description: "Not just a good shot he could also fix your teeth."
+          }
+        }
+      },
+      {
+        type: :person,
+        effect_range: (2..4),
+        effect_type: :attack,
+        text: {
+          gang:{
+            name: "Billy the Kid",
+            description: "The infamous gun slinger offers to join you for job."
+          },
+          pinkerton:{
+            name: "Wyatt Earp",
+            description:
+            "The famous lawman offers to ride a long on one of your jobs."
           }
         }
       }

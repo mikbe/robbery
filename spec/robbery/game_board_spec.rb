@@ -23,19 +23,6 @@ describe Robbery::GameBoard do
     board.deck.should_not be_nil
   end
 
-  context "when starting a turn" do
-
-    it "should generate train sets" do
-      board.add_player(
-        name: "Fred",
-        gang: :gang,
-        gang_name: "The Wilmas"
-      )
-      expect{board.start_turn}.should change(board, :trains).from be_empty
-    end
-
-  end
-
   context "when resetting the board" do
 
     it "should remove players" do
