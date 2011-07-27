@@ -1,6 +1,6 @@
 module Robbery
   class Player
-    include Identifiable
+
     attr_reader :name, :gang, :gang_name,
                 :cards,
                 :fame, :riches
@@ -56,7 +56,7 @@ module Robbery
         when :fame
           @fame += amount
         when :riches
-          @fame += amount
+          @riches += amount
       end
 
     end

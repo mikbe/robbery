@@ -1,6 +1,11 @@
 module Robbery
   class Train
-    include Identifiable
+    
+    # don't use this threaded
+    @train_count = 0
+    def self.train_count
+      @train_count += 1
+    end
 
     attr_reader :name, :type, :cars, :value, :placed_cards
 
@@ -10,6 +15,7 @@ module Robbery
       @cars  = rand(level * 2) + 1
       @value = rand(level * 3) + 1
       @placed_cards = {}
+      @number = Train.train_count
     end
 
     def place_card(params)
@@ -19,10 +25,12 @@ module Robbery
       @placed_cards[player] ||= []
       return if @placed_cards[player].count >= @cars
       
-      remove_card(card) if card.placed_on_train
+      if existing_train = card.placed_on_train
+        existing_train.remove_card(card)
+      end
       card.placed_on_train = self
 
-      @placed_cards[player] << params[:card]
+      @placed_cards[player] << card
       card
     end
 

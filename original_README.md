@@ -1,4 +1,4 @@
-If you've only ever played family board games such as Scrabble and Monopoly,
+If you've only ever played family game games such as Scrabble and Monopoly,
 you've missed out on a whole world of geeky goodness. There is an entire
 subculture dedicated to fiendishly complex strategy games that are a ton of fun
 to play and also serve as a great way to exercise the same sort of logic and
@@ -6,7 +6,7 @@ reasoning that you need to use to write good software. Every time I play one of
 these games, I think about what it must take to actually design them and usually
 end up with a headache.
 
-For this exercise, you'll be taking inspiration from a pair of board games,
+For this exercise, you'll be taking inspiration from a pair of game games,
 "Ticket to Ride" and "Steam", and then working to come up with a game engine
 that is inspired by them. Please start by watching the following two videos so
 that you can understand what the games are about.

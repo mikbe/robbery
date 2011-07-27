@@ -1,7 +1,6 @@
 module Robbery
 
   class Card
-    include Identifiable
 
     attr_accessor :type, :effect_amount, :effect_type,
                   :name, :description, :placed_on_train,
